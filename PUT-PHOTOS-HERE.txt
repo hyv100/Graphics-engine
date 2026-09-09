@@ -1,0 +1,1 @@
+Put your approved hero photos in this folder. In the calendar, set the image column to the filename (for example: nurse1.jpg). If image is blank, the engine uses hero_default.jpg.
