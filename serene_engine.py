@@ -778,10 +778,42 @@ def main():
     ext = ".jpg" if args.format == "jpg" else ".png" if args.format == "png" else None
     os.makedirs(args.output, exist_ok=True)
 
-    ok_count, fail_count, warn_count = 0, 0, 0
+    # QA guard: duplicate output names would silently overwrite each other
+    seen_names, dup_rows = {}, []
     for i, row in enumerate(rows, 1):
         stem, sfx = slug_for(row, i)
-        out = Path(args.output) / (stem + (ext or sfx or ".jpg"))
+        name = stem + (ext or sfx or ".jpg")
+        if name in seen_names:
+            dup_rows.append((i, name, seen_names[name]))
+        else:
+            seen_names[name] = i
+    if dup_rows:
+        print(f"WARNING: {len(dup_rows)} duplicate output filename(s) — rows would overwrite "
+              f"each other. Auto-suffixing the later rows.")
+        for i, name, first_i in dup_rows:
+            print(f"   row {i} would overwrite row {first_i} -> {name}")
+
+    # QA guard: rows sharing one hero photo will look alike in the feed
+    img_usage = {}
+    for i, row in enumerate(rows, 1):
+        img_usage.setdefault(val_req(row, "image", "hero_default.jpg").strip() or "hero_default.jpg", []).append(i)
+    for img, i_list in img_usage.items():
+        if len(i_list) > 1:
+            print(f"NOTE: rows {', '.join(map(str, i_list))} share the same hero image ({img}) — "
+                  f"these posts will look very similar in the feed. Vary the 'image' column for variety.")
+
+    ok_count, fail_count, warn_count = 0, 0, 0
+    used_names = {}
+    for i, row in enumerate(rows, 1):
+        stem, sfx = slug_for(row, i)
+        name = stem + (ext or sfx or ".jpg")
+        if name in used_names:                       # never silently overwrite
+            n = 2
+            while f"{stem}-{n}{Path(name).suffix}" in used_names:
+                n += 1
+            name = f"{stem}-{n}{Path(name).suffix}"
+        used_names[name] = i
+        out = Path(args.output) / name
         try:
             if args.validate:
                 _, report = generate(row, args.assets, out, args.font_dir, args.size, save=False)
