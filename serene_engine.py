@@ -37,7 +37,7 @@ FONT_CANDIDATES = {
     "bold": ["Poppins-ExtraBold.ttf","Poppins-Bold.ttf","Montserrat-ExtraBold.ttf","Montserrat-Bold.ttf","Lato-Heavy.ttf","Lato-Bold.ttf","DejaVuSans-Bold.ttf"],
     "semibold": ["Poppins-SemiBold.ttf","Montserrat-SemiBold.ttf","Lato-Semibold.ttf","DejaVuSans-Bold.ttf"],
     "regular": ["Poppins-Regular.ttf","Montserrat-Regular.ttf","Lato-Regular.ttf","DejaVuSans.ttf"],
-    "script": ["BrushScript.ttf","URWChanceryL-MediumItalic.otf","DejaVuSerif-Italic.ttf"]
+    "script": ["BrushScript.ttf","DancingScript-Bold.ttf","DancingScript-SemiBold.ttf","Caveat-Bold.ttf","Pacifico-Regular.ttf","URWChanceryL-MediumItalic.otf","DejaVuSerif-Italic.ttf"]
 }
 
 def find_font(kind, font_dir=None):
